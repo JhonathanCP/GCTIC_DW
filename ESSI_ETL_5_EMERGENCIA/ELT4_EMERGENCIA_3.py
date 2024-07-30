@@ -9,6 +9,7 @@ import oracledb
 import sys
 
 
+
 #CONEXIONES
 DB_USER=config("USER2_BDI_POSTGRES")
 DB_PASSWORD=config("PASS2_BDI_POSTGRES")
