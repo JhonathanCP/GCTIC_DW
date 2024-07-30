@@ -336,6 +336,7 @@ for i in range(total_meses+1):
 	df2_columns = set(base2.columns) 
 	different_columns = df2_columns - df1_columns
 	different_columns
+	
 
 	borrando=f"DELETE FROM {dat} WHERE {col_dat} >='{fecha_ini_str}' and {col_dat} <'{fecha_fin_str}'"
 	borrado = connection2.execute(borrando)

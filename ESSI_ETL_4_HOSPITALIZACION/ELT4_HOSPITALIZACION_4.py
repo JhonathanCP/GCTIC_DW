@@ -273,6 +273,7 @@ for i in range(total_meses+1):
 	base1['ori_cas']=base1['ori_cas'].str.strip()
 	base1 = pd.merge(base1, oricas, on='ori_cas', how="left")
 	base1 = base1.drop('ori_cas', axis=1)
+	
 
 	
 	cas = pd.read_sql_query(f"SELECT id_cas,cod_cas, cod_red FROM dim_cas where id_cas is not null", con=connection2)
