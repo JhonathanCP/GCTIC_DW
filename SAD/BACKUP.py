@@ -17,7 +17,7 @@ subprocess.run(dump_cmd, shell=True, check=True)
 new_user = "postgres"
 new_host = "10.0.1.229"
 new_port = "5432"
-new_db = "pbi_gctic_v1.1_BCK1"
+new_db = "explora_datos"
 
 # Comando para crear la nueva base de datos
 create_db_cmd = f"createdb -U {new_user} -h {new_host} -p {new_port} {new_db}"
