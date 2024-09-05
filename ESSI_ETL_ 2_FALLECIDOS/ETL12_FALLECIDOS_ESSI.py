@@ -94,6 +94,8 @@ query = f"""SELECT
     d.arehoscod,
     t.deftipdocidenpercod,
     t.defperasisdocidennum,
+    t.defcrefec,
+    t.defmodfec,
 (
     SELECT u.defdxdiagcod
     FROM SGSS.CTDEX10 u
@@ -368,7 +370,9 @@ base1 = base.rename(columns={
     'defdiagsec10': 'cod_cie_s10',
     'defcertnum': 'cert_num',
     'defconfregflg': 'reg_flg',
-    'defconfregfec': 'reg_fec'
+    'defconfregfec': 'reg_fec',
+    'defcrefec': 'fec_cre',
+    'defmodfec': 'fec_mod'
 })
 
 

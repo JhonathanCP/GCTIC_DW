@@ -329,7 +329,7 @@ for i in range(0, (fecha_fin - fecha_ini).days + 1, dias_por_intervalo):
 
 	enco = pd.read_sql_query(f"SELECT id_esteco,cod_eco FROM dim_cexcitoto", con=connection2)
 	enco = enco.rename(columns={'id_esteco':'id_enco'})
-	enco = enco.rename(columns={'cod_eco':'dim_cexcitoto'})
+	enco = enco.rename(columns={'cod_eco':'cod_enco'})
 	base1=pd.merge(base1,enco,how='left',on='cod_enco')
 
 	base1=base1.drop('cod_enco', axis=1)
