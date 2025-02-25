@@ -11,8 +11,8 @@ DB_CONFIG = {
 }
 
 # Tablas origen y destino
-TABLAS_SALUD_MENTAL = [
-    "sgss_ctdan10_anio_salud_mental"
+TABLAS_OBESIDAD = [
+    "sgss_ctdan10_anio_obesidad"
 ]
 
 TABLAS_ATENCION = [
@@ -20,12 +20,12 @@ TABLAS_ATENCION = [
 ]
 
 TABLAS_TMP = [
-    "tmp_salud_mental_actmed_ctdan10"
+    "tmp_obesidad_actmed_ctdan10"
 ]
 
 # Mapear prefijos para cada tabla
 PREFIJOS = {
-    "sgss_ctdan10_anio_salud_mental": "atenom"
+    "sgss_ctdan10_anio_obesidad": "atenom"
 }
 
 # Mapeo de nombres de columna de fecha según la tabla de atención
@@ -46,8 +46,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
-    for i in range(len(TABLAS_SALUD_MENTAL)):
-        tabla_a = TABLAS_SALUD_MENTAL[i]
+    for i in range(len(TABLAS_OBESIDAD)):
+        tabla_a = TABLAS_OBESIDAD[i]
         tabla_b = TABLAS_ATENCION[i]
         tabla_tmp = TABLAS_TMP[i]
         prefijo = PREFIJOS[tabla_a]
@@ -99,8 +99,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
                 tabla_particionada = f"{tabla_b}_{anio}_{mes_str}"
                 
                 try:
-                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_salud_mental" else \
-                            "'NOMED'" if tabla_a == "sgss_ctdan10_anio_salud_mental" else ''
+                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_obesidad" else \
+                            "'NOMED'" if tabla_a == "sgss_ctdan10_anio_obesidad" else ''
                     cod_secuencia = "''"
                     query = f"""
                                 SELECT b.cod_oricentro, b.cod_centro, b.acto_med, b.periodo,

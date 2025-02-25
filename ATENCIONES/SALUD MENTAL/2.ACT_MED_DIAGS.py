@@ -139,4 +139,4 @@ def procesar_datos(fecha_inicio, fecha_fin):
     print("Proceso completado.")
 
 # Ejecutar
-procesar_datos("202501", "202512")
+procesar_datos("201901", "202512")

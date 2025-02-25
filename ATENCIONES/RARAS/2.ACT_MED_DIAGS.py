@@ -11,26 +11,41 @@ DB_CONFIG = {
 }
 
 # Tablas origen y destino
-TABLAS_SALUD_MENTAL = [
-    "sgss_ctdan10_anio_salud_mental"
+TABLAS_CANCER = [
+    "sgss_ctdaa10_anio_cancer",
+    "sgss_mtdae10_anio_cancer",
+    "sgss_htdah10_anio_cancer",
+    # "sgss_qtiod10_anio_cancer",
 ]
 
 TABLAS_ATENCION = [
-    "dw_ate_nomedica"
+    "dw_consulta_externa",
+    "dw_emergencia_egresos",
+    "dw_hospitalizacion_egresos",
+    # "dw_centro_quirurgico",
 ]
 
 TABLAS_TMP = [
-    "tmp_salud_mental_actmed_ctdan10"
+    "tmp_cancer_actmed_ctdaa10",
+    "tmp_cancer_actmed_mtdae10",
+    "tmp_cancer_actmed_htdah10",
+    # "tmp_cancer_actmed_qtiod10",
 ]
 
 # Mapear prefijos para cada tabla
 PREFIJOS = {
-    "sgss_ctdan10_anio_salud_mental": "atenom"
+    "sgss_ctdaa10_anio_cancer": "atenamb",
+    "sgss_mtdae10_anio_cancer": "ateeme",
+    "sgss_htdah10_anio_cancer": "atenhos",
+    # "sgss_qtiod10_anio_cancer": "infope"
 }
 
 # Mapeo de nombres de columna de fecha según la tabla de atención
 MAPEO_FECHA_ATENCION = {
-    "dw_ate_nomedica": "fecha_atencion"
+    "dw_consulta_externa": "fecha_atencion",
+    "dw_emergencia_egresos": "fec_altadm",
+    "dw_hospitalizacion_egresos": "fec_egreso",
+    # "dw_centro_quirurgico": "fec_oper"
 }
 
 # Columnas estándar en las tablas temporales
@@ -46,8 +61,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
-    for i in range(len(TABLAS_SALUD_MENTAL)):
-        tabla_a = TABLAS_SALUD_MENTAL[i]
+    for i in range(len(TABLAS_CANCER)):
+        tabla_a = TABLAS_CANCER[i]
         tabla_b = TABLAS_ATENCION[i]
         tabla_tmp = TABLAS_TMP[i]
         prefijo = PREFIJOS[tabla_a]
@@ -99,36 +114,54 @@ def procesar_datos(fecha_inicio, fecha_fin):
                 tabla_particionada = f"{tabla_b}_{anio}_{mes_str}"
                 
                 try:
-                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_salud_mental" else \
-                            "'NOMED'" if tabla_a == "sgss_ctdan10_anio_salud_mental" else ''
-                    cod_secuencia = "''"
+                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "'EMER'" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "'HOSP'" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "'CQX'" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
+                    cod_secuencia = "''" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            f"{prefijo}secnum"
+                    cod_actividad = "cod_actividad" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "cod_actividad" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
+                    cod_subactividad = "cod_subactividad" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
+                    cod_cartera = "cod_cartera" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
+                    cod_cpms = "cod_cpms" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "cod_cpms" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
+                    cod_tipdoc_medico = "cod_tipdoc_medico" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "cod_tipdoc_medico" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "cod_tipdoc_medico" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
+                    dni_medico = "dni_medico" if tabla_a == "sgss_ctdaa10_anio_cancer" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer" else \
+                            "dni_medico" if tabla_a == "sgss_htdah10_anio_cancer" else \
+                            "dni_medico" if tabla_a == "sgss_qtiod10_anio_cancer" else ''
                     query = f"""
                                 SELECT b.cod_oricentro, b.cod_centro, b.acto_med, b.periodo,
                                     b.{columna_fecha} AS fecha_atencion,  -- 🔹 Se mapea a "fecha_atencion"
                                     b.cmame_pacsecnum, b.cod_tipdoc_paciente, 
-                                    b.doc_paciente, b.anio_edad,
-                                    CASE 
-                                        WHEN p.persexocod = '0' THEN 'F'
-                                        WHEN p.persexocod = '1' THEN 'M'
-                                        ELSE p.persexocod
-                                    END AS sexo,  -- 🔹 Ahora se obtiene de la tabla personas_essi_4
+                                    b.doc_paciente, b.anio_edad, b.sexo,
                                     a.conddiagcod AS cod_conddiag, a.diagcod as cod_diagnostico, 
                                     a.{prefijo}diagord AS cod_orden, a.{prefijo}tipodiagcod AS cod_tipodiag,
                                     {area} AS area, b.anio as anio_busqueda, {cod_secuencia} AS cod_secuencia,
-                                    cas_adscripcion, cod_servicio, cod_actividad, b.cod_subactividad, b.cod_cartera,
-                                    b.cod_cpms, b.cod_tipdoc_medico, b.dni_medico
+                                    cas_adscripcion, b.cod_servicio, {cod_actividad} AS cod_actividad, 
+                                    {cod_subactividad} AS cod_subactividad, {cod_cartera} AS cod_cartera,
+                                    {cod_cpms} AS cod_cpms, {cod_tipdoc_medico} AS cod_tipdoc_medico, {dni_medico} AS dni_medico
                                 FROM {tabla_a} a
                                 JOIN {tabla_particionada} b
                                 ON a.{prefijo}oricenasicod = b.cod_oricentro
                                 AND a.{prefijo}cenasicod = b.cod_centro
-                                AND a.{prefijo}actmednum = b.acto_med
-                                LEFT JOIN personas_essi_4 p
-                                ON p.pertipdocidencod = b.cod_tipdoc_paciente
-                                AND p.perdocidennum = b.doc_paciente
-                                WHERE p.row_num = '1'  -- 🔹 Aseguramos que sea el primer registro
-                    """
+                                --AND a.{prefijo}actmednum = cast(b.num_solicitud as int)
+                                AND a.{prefijo}actmednum = b.acto_med"""
                     df = pl.read_database(query, connection=conn)
-                    
                     if not df.is_empty():
                         cursor.executemany(
                             f"INSERT INTO {tabla_tmp} ({', '.join(COLUMNAS_STD)}) VALUES ({', '.join(['%s'] * len(COLUMNAS_STD))})",
@@ -145,4 +178,3 @@ def procesar_datos(fecha_inicio, fecha_fin):
 
 # Ejecutar
 procesar_datos("201901", "202512")
-
