@@ -12,40 +12,40 @@ DB_CONFIG = {
 
 # Tablas origen y destino
 TABLAS_CANCER = [
-    # "sgss_ctdaa10_anio_cancer",
-    # "sgss_mtdae10_anio_cancer",
-    # "sgss_htdah10_anio_cancer",
-    "sgss_qtiod10_anio_cancer",
+    "sgss_ctdaa10_anio_cancer",
+    "sgss_mtdae10_anio_cancer",
+    "sgss_htdah10_anio_cancer",
+    # "sgss_qtiod10_anio_cancer",
 ]
 
 TABLAS_ATENCION = [
-    # "dw_consulta_externa",
-    # "dw_emergencia_egresos",
-    # "dw_hospitalizacion_egresos",
-    "dw_centro_quirurgico",
+    "dw_consulta_externa",
+    "dw_emergencia_egresos",
+    "dw_hospitalizacion_egresos",
+    # "dw_centro_quirurgico",
 ]
 
 TABLAS_TMP = [
-    # "tmp_cancer_actmed_ctdaa10",
-    # "tmp_cancer_actmed_mtdae10",
-    # "tmp_cancer_actmed_htdah10",
-    "tmp_cancer_actmed_qtiod10",
+    "tmp_cancer_actmed_ctdaa10",
+    "tmp_cancer_actmed_mtdae10",
+    "tmp_cancer_actmed_htdah10",
+    # "tmp_cancer_actmed_qtiod10",
 ]
 
 # Mapear prefijos para cada tabla
 PREFIJOS = {
-    # "sgss_ctdaa10_anio_cancer": "atenamb",
-    # "sgss_mtdae10_anio_cancer": "ateeme",
-    # "sgss_htdah10_anio_cancer": "atenhos",
-    "sgss_qtiod10_anio_cancer": "infope"
+    "sgss_ctdaa10_anio_cancer": "atenamb",
+    "sgss_mtdae10_anio_cancer": "ateeme",
+    "sgss_htdah10_anio_cancer": "atenhos",
+    # "sgss_qtiod10_anio_cancer": "infope"
 }
 
 # Mapeo de nombres de columna de fecha según la tabla de atención
 MAPEO_FECHA_ATENCION = {
-    # "dw_consulta_externa": "fecha_atencion",
-    # "dw_emergencia_egresos": "fec_altadm",
-    # "dw_hospitalizacion_egresos": "fec_egreso",
-    "dw_centro_quirurgico": "fec_oper"
+    "dw_consulta_externa": "fecha_atencion",
+    "dw_emergencia_egresos": "fec_altadm",
+    "dw_hospitalizacion_egresos": "fec_egreso",
+    # "dw_centro_quirurgico": "fec_oper"
 }
 
 # Columnas estándar en las tablas temporales
@@ -159,7 +159,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
                                 JOIN {tabla_particionada} b
                                 ON a.{prefijo}oricenasicod = b.cod_oricentro
                                 AND a.{prefijo}cenasicod = b.cod_centro
-                                AND a.{prefijo}actmednum = cast(b.num_solicitud as int)"""
+                                --AND a.{prefijo}actmednum = cast(b.num_solicitud as int)
+                                AND a.{prefijo}actmednum = b.acto_med"""
                     df = pl.read_database(query, connection=conn)
                     if not df.is_empty():
                         cursor.executemany(

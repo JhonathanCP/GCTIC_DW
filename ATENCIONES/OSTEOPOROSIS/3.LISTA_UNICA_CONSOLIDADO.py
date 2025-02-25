@@ -13,10 +13,10 @@ DB_CONFIG = {
 
 # Nombres de las tablas temporales
 TABLAS_TMP = [
-    "tmp_cancer_actmed_ctdaa10",
-    "tmp_cancer_actmed_mtdae10",
-    "tmp_cancer_actmed_htdah10",
-    "tmp_cancer_actmed_qtiod10",
+    "tmp_osteoporosis_actmed_ctdaa10",
+    # "tmp_osteoporosis_actmed_mtdae10",
+    # "tmp_osteoporosis_actmed_htdah10",
+    # "tmp_osteoporosis_actmed_qtiod10",
 ]
 
 # Orden de columnas esperado en la tabla PostgreSQL
@@ -37,7 +37,7 @@ def procesar_datos():
 
     print("Creando la tabla si no existe...")
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS mtd_lista_unica_pacientes_raras(
+        CREATE TABLE IF NOT EXISTS mtd_lista_unica_pacientes(
             cod_oricentro VARCHAR(3),
             cod_centro VARCHAR(4),
             acto_med NUMERIC(10),
@@ -84,8 +84,8 @@ def procesar_datos():
     print("Combinando registros de las tablas...")
     combined_df = pl.concat(registros)
 
-    print("Agregando tipo_busqueda = 1...")
-    combined_df = combined_df.with_columns(pl.lit(1).alias("tipo_busqueda"))
+    print("Agregando tipo_busqueda = 8...")
+    combined_df = combined_df.with_columns(pl.lit(8).alias("tipo_busqueda"))
 
     print("Ordenando por paciente y fecha_atencion, asignando row_num...")
 
