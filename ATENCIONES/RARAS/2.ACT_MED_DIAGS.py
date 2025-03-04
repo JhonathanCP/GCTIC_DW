@@ -160,7 +160,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
                                 ON a.{prefijo}oricenasicod = b.cod_oricentro
                                 AND a.{prefijo}cenasicod = b.cod_centro
                                 --AND a.{prefijo}actmednum = b.acto_med
-                                AND a.{prefijo}actmednum = cast(b.num_solicitud as int)"""
+                                AND a.{prefijo}actmednum = cast(b.num_solicitud as int)
+                                """
                     df = pl.read_database(query, connection=conn)
                     if not df.is_empty():
                         cursor.executemany(

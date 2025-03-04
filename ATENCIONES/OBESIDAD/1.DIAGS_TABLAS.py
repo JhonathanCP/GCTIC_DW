@@ -11,7 +11,7 @@ DB_CONFIG = {
 }
 
 # Diagnósticos de obesidad a filtrar
-DIAGCOD_OBESIDAD = ('E66','E66.0','E66.1','E66.2','E66.3','E66.8','E66.9')
+DIAGCOD_OBESIDAD = ('E66','E66.0','E66.1','E66.2','E66.8','E66.9')
 
 # Años a considerar
 ANIOS_PERMITIDOS = ('2019','2020','2021','2022','2023','2024','2025')

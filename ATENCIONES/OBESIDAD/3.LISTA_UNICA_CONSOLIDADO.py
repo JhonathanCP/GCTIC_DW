@@ -14,7 +14,7 @@ DB_CONFIG = {
 # Nombres de las tablas temporales
 TABLAS_TMP = [
     "tmp_obesidad_actmed_ctdaa10",
-    "tmp_obesidad_actmed_ctdan10"
+    "tmp_obesidad_actmed_ctdan10_1"
 ]
 
 # Orden de columnas esperado en la tabla PostgreSQL
