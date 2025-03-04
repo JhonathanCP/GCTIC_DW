@@ -11,11 +11,11 @@ DB_CONFIG = {
 }
 
 # Tablas origen y destino
-TABLAS_RENAL = [
-    # "sgss_ctdaa10_anio_renal",
-    # "sgss_mtdae10_anio_renal",
-    # "sgss_htdah10_anio_renal",
-    "sgss_qtiod10_anio_renal",
+TABLAS_RARAS = [
+    # "sgss_ctdaa10_anio_raras",
+    # "sgss_mtdae10_anio_raras",
+    # "sgss_htdah10_anio_raras",
+    "sgss_qtiod10_anio_raras",
 ]
 
 TABLAS_ATENCION = [
@@ -26,18 +26,18 @@ TABLAS_ATENCION = [
 ]
 
 TABLAS_TMP = [
-    # "tmp_renal_actmed_ctdaa10",
-    # "tmp_renal_actmed_mtdae10",
-    # "tmp_renal_actmed_htdah10",
-    "tmp_renal_actmed_qtiod10",
+    # "tmp_raras_actmed_ctdaa10",
+    # "tmp_raras_actmed_mtdae10",
+    # "tmp_raras_actmed_htdah10",
+    "tmp_raras_actmed_qtiod10",
 ]
 
 # Mapear prefijos para cada tabla
 PREFIJOS = {
-    # "sgss_ctdaa10_anio_renal": "atenamb",
-    # "sgss_mtdae10_anio_renal": "ateeme",
-    # "sgss_htdah10_anio_renal": "atenhos",
-    "sgss_qtiod10_anio_renal": "infope"
+    # "sgss_ctdaa10_anio_raras": "atenamb",
+    # "sgss_mtdae10_anio_raras": "ateeme",
+    # "sgss_htdah10_anio_raras": "atenhos",
+    "sgss_qtiod10_anio_raras": "infope"
 }
 
 # Mapeo de nombres de columna de fecha según la tabla de atención
@@ -54,15 +54,15 @@ COLUMNAS_STD = [
     "cmame_pacsecnum", "cod_tipdoc_paciente", "doc_paciente", "anio_edad", "sexo",
     "cod_conddiag", "cod_diagnostico", "cod_orden", "cod_tipodiag", "area", 
     "anio_busqueda", "cod_secuencia", "cas_adscripcion", "cod_servicio", "cod_actividad",
-    "cod_subactividad", "cod_cartera", "cod_cpms", "cod_tipdoc_medico", "dni_medico"
+    "cod_subactividad", "cod_cartera", "cod_cpms", "cod_tipdoc_medico", "dni_medico", "num_solicitud"
 ]
 
 def procesar_datos(fecha_inicio, fecha_fin):
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
-    for i in range(len(TABLAS_RENAL)):
-        tabla_a = TABLAS_RENAL[i]
+    for i in range(len(TABLAS_RARAS)):
+        tabla_a = TABLAS_RARAS[i]
         tabla_b = TABLAS_ATENCION[i]
         tabla_tmp = TABLAS_TMP[i]
         prefijo = PREFIJOS[tabla_a]
@@ -95,7 +95,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
                 cod_cartera VARCHAR(30),
                 cod_cpms VARCHAR(30),
                 cod_tipdoc_medico VARCHAR(30),
-                dni_medico VARCHAR(30)
+                dni_medico VARCHAR(30),
+                num_solicitud INT
             )
         """)
         conn.commit()
@@ -114,36 +115,37 @@ def procesar_datos(fecha_inicio, fecha_fin):
                 tabla_particionada = f"{tabla_b}_{anio}_{mes_str}"
                 
                 try:
-                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "'EMER'" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "'HOSP'" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "'CQX'" if tabla_a == "sgss_qtiod10_anio_renal" else ''
-                    cod_secuencia = "''" if tabla_a == "sgss_ctdaa10_anio_renal" else \
+                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "'EMER'" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "'HOSP'" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "'CQX'" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    cod_secuencia = "''" if tabla_a == "sgss_ctdaa10_anio_raras" else \
                             f"{prefijo}secnum"
-                    cod_actividad = "cod_actividad" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "cod_actividad" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "''" if tabla_a == "sgss_qtiod10_anio_renal" else ''
-                    cod_subactividad = "cod_subactividad" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "''" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "''" if tabla_a == "sgss_qtiod10_anio_renal" else ''
-                    cod_cartera = "cod_cartera" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "''" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "''" if tabla_a == "sgss_qtiod10_anio_renal" else ''
-                    cod_cpms = "cod_cpms" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "''" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "cod_cpms" if tabla_a == "sgss_qtiod10_anio_renal" else ''
-                    cod_tipdoc_medico = "cod_tipdoc_medico" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "cod_tipdoc_medico" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "cod_tipdoc_medico" if tabla_a == "sgss_qtiod10_anio_renal" else ''
-                    dni_medico = "dni_medico" if tabla_a == "sgss_ctdaa10_anio_renal" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_renal" else \
-                            "dni_medico" if tabla_a == "sgss_htdah10_anio_renal" else \
-                            "dni_medico" if tabla_a == "sgss_qtiod10_anio_renal" else ''
+                    cod_actividad = "cod_actividad" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "cod_actividad" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    cod_subactividad = "cod_subactividad" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    cod_cartera = "cod_cartera" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    cod_cpms = "cod_cpms" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "cod_cpms" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    cod_tipdoc_medico = "cod_tipdoc_medico" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "cod_tipdoc_medico" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "cod_tipdoc_medico" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    dni_medico = "dni_medico" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
+                            "dni_medico" if tabla_a == "sgss_htdah10_anio_raras" else \
+                            "dni_medico" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    num_solicitud = "num_solicitud" if tabla_a == "sgss_qtiod10_anio_raras" else ''
                     query = f"""
                                 SELECT b.cod_oricentro, b.cod_centro, b.acto_med, b.periodo,
                                     b.{columna_fecha} AS fecha_atencion,  -- 🔹 Se mapea a "fecha_atencion"
@@ -154,13 +156,14 @@ def procesar_datos(fecha_inicio, fecha_fin):
                                     {area} AS area, b.anio as anio_busqueda, {cod_secuencia} AS cod_secuencia,
                                     cas_adscripcion, b.cod_servicio, {cod_actividad} AS cod_actividad, 
                                     {cod_subactividad} AS cod_subactividad, {cod_cartera} AS cod_cartera,
-                                    {cod_cpms} AS cod_cpms, {cod_tipdoc_medico} AS cod_tipdoc_medico, {dni_medico} AS dni_medico
+                                    {cod_cpms} AS cod_cpms, {cod_tipdoc_medico} AS cod_tipdoc_medico, {dni_medico} AS dni_medico,
+                                    {num_solicitud} AS num_solicitud
                                 FROM {tabla_a} a
                                 JOIN {tabla_particionada} b
                                 ON a.{prefijo}oricenasicod = b.cod_oricentro
                                 AND a.{prefijo}cenasicod = b.cod_centro
-                                AND a.{prefijo}actmednum = cast(b.num_solicitud as int)
                                 --AND a.{prefijo}actmednum = b.acto_med
+                                AND a.{prefijo}actmednum = cast(b.num_solicitud as int)
                                 """
                     df = pl.read_database(query, connection=conn)
                     if not df.is_empty():
