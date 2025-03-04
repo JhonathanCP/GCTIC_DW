@@ -11,41 +11,41 @@ DB_CONFIG = {
 }
 
 # Tablas origen y destino
-TABLAS_RARAS = [
-    # "sgss_ctdaa10_anio_raras",
-    # "sgss_mtdae10_anio_raras",
-    # "sgss_htdah10_anio_raras",
-    "sgss_qtiod10_anio_raras",
+TABLAS_CANCER_VPH = [
+    "sgss_ctdaa10_anio_cancer_vph",
+    # "sgss_mtdae10_anio_cancer_vph",
+    # "sgss_htdah10_anio_cancer_vph",
+    # "sgss_qtiod10_anio_cancer_vph",
 ]
 
 TABLAS_ATENCION = [
-    # "dw_consulta_externa",
+    "dw_consulta_externa",
     # "dw_emergencia_egresos",
     # "dw_hospitalizacion_egresos",
-    "dw_centro_quirurgico",
+    # "dw_centro_quirurgico",
 ]
 
 TABLAS_TMP = [
-    # "tmp_raras_actmed_ctdaa10",
-    # "tmp_raras_actmed_mtdae10",
-    # "tmp_raras_actmed_htdah10",
-    "tmp_raras_actmed_qtiod10",
+    "tmp_cancer_vph_actmed_ctdaa10",
+    # "tmp_cancer_vph_actmed_mtdae10",
+    # "tmp_cancer_vph_actmed_htdah10",
+    # "tmp_cancer_vph_actmed_qtiod10",
 ]
 
 # Mapear prefijos para cada tabla
 PREFIJOS = {
-    # "sgss_ctdaa10_anio_raras": "atenamb",
-    # "sgss_mtdae10_anio_raras": "ateeme",
-    # "sgss_htdah10_anio_raras": "atenhos",
-    "sgss_qtiod10_anio_raras": "infope"
+    "sgss_ctdaa10_anio_cancer_vph": "atenamb",
+    # "sgss_mtdae10_anio_cancer_vph": "ateeme",
+    # "sgss_htdah10_anio_cancer_vph": "atenhos",
+    # "sgss_qtiod10_anio_cancer_vph": "infope"
 }
 
 # Mapeo de nombres de columna de fecha según la tabla de atención
 MAPEO_FECHA_ATENCION = {
-    # "dw_consulta_externa": "fecha_atencion",
+    "dw_consulta_externa": "fecha_atencion",
     # "dw_emergencia_egresos": "fec_altadm",
     # "dw_hospitalizacion_egresos": "fec_egreso",
-    "dw_centro_quirurgico": "fec_oper"
+    # "dw_centro_quirurgico": "fec_oper"
 }
 
 # Columnas estándar en las tablas temporales
@@ -61,8 +61,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
     conn = psycopg2.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
-    for i in range(len(TABLAS_RARAS)):
-        tabla_a = TABLAS_RARAS[i]
+    for i in range(len(TABLAS_CANCER_VPH)):
+        tabla_a = TABLAS_CANCER_VPH[i]
         tabla_b = TABLAS_ATENCION[i]
         tabla_tmp = TABLAS_TMP[i]
         prefijo = PREFIJOS[tabla_a]
@@ -114,36 +114,36 @@ def procesar_datos(fecha_inicio, fecha_fin):
                 tabla_particionada = f"{tabla_b}_{anio}_{mes_str}"
                 
                 try:
-                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "'EMER'" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "'HOSP'" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "'CQX'" if tabla_a == "sgss_qtiod10_anio_raras" else ''
-                    cod_secuencia = "''" if tabla_a == "sgss_ctdaa10_anio_raras" else \
+                    area = "'CEXT'" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "'EMER'" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "'HOSP'" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "'CQX'" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
+                    cod_secuencia = "''" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
                             f"{prefijo}secnum"
-                    cod_actividad = "cod_actividad" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "cod_actividad" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "''" if tabla_a == "sgss_qtiod10_anio_raras" else ''
-                    cod_subactividad = "cod_subactividad" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "''" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "''" if tabla_a == "sgss_qtiod10_anio_raras" else ''
-                    cod_cartera = "cod_cartera" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "''" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "''" if tabla_a == "sgss_qtiod10_anio_raras" else ''
-                    cod_cpms = "cod_cpms" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "''" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "cod_cpms" if tabla_a == "sgss_qtiod10_anio_raras" else ''
-                    cod_tipdoc_medico = "cod_tipdoc_medico" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "cod_tipdoc_medico" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "cod_tipdoc_medico" if tabla_a == "sgss_qtiod10_anio_raras" else ''
-                    dni_medico = "dni_medico" if tabla_a == "sgss_ctdaa10_anio_raras" else \
-                            "''" if tabla_a == "sgss_mtdae10_anio_raras" else \
-                            "dni_medico" if tabla_a == "sgss_htdah10_anio_raras" else \
-                            "dni_medico" if tabla_a == "sgss_qtiod10_anio_raras" else ''
+                    cod_actividad = "cod_actividad" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "cod_actividad" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
+                    cod_subactividad = "cod_subactividad" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
+                    cod_cartera = "cod_cartera" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
+                    cod_cpms = "cod_cpms" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "cod_cpms" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
+                    cod_tipdoc_medico = "cod_tipdoc_medico" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "cod_tipdoc_medico" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "cod_tipdoc_medico" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
+                    dni_medico = "dni_medico" if tabla_a == "sgss_ctdaa10_anio_cancer_vph" else \
+                            "''" if tabla_a == "sgss_mtdae10_anio_cancer_vph" else \
+                            "dni_medico" if tabla_a == "sgss_htdah10_anio_cancer_vph" else \
+                            "dni_medico" if tabla_a == "sgss_qtiod10_anio_cancer_vph" else ''
                     query = f"""
                                 SELECT b.cod_oricentro, b.cod_centro, b.acto_med, b.periodo,
                                     b.{columna_fecha} AS fecha_atencion,  -- 🔹 Se mapea a "fecha_atencion"
@@ -159,8 +159,8 @@ def procesar_datos(fecha_inicio, fecha_fin):
                                 JOIN {tabla_particionada} b
                                 ON a.{prefijo}oricenasicod = b.cod_oricentro
                                 AND a.{prefijo}cenasicod = b.cod_centro
-                                --AND a.{prefijo}actmednum = b.acto_med
-                                AND a.{prefijo}actmednum = cast(b.num_solicitud as int)"""
+                                --AND a.{prefijo}actmednum = cast(b.num_solicitud as int)
+                                AND a.{prefijo}actmednum = b.acto_med"""
                     df = pl.read_database(query, connection=conn)
                     if not df.is_empty():
                         cursor.executemany(

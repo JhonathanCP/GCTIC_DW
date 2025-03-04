@@ -13,10 +13,10 @@ DB_CONFIG = {
 
 # Nombres de las tablas temporales
 TABLAS_TMP = [
-    "tmp_cancer_actmed_ctdaa10",
-    "tmp_cancer_actmed_mtdae10",
-    "tmp_cancer_actmed_htdah10",
-    "tmp_cancer_actmed_qtiod10",
+    "tmp_cancer_vph_actmed_ctdaa10",
+    # "tmp_cancer_vph_actmed_mtdae10",
+    # "tmp_cancer_vph_actmed_htdah10",
+    # "tmp_cancer_vph_actmed_qtiod10",
 ]
 
 # Orden de columnas esperado en la tabla PostgreSQL
@@ -84,8 +84,8 @@ def procesar_datos():
     print("Combinando registros de las tablas...")
     combined_df = pl.concat(registros)
 
-    print("Agregando tipo_busqueda = 9...")
-    combined_df = combined_df.with_columns(pl.lit(9).alias("tipo_busqueda"))
+    print("Agregando tipo_busqueda = 15...")
+    combined_df = combined_df.with_columns(pl.lit(15).alias("tipo_busqueda"))
 
     print("Ordenando por paciente y fecha_atencion, asignando row_num...")
 

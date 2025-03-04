@@ -23,37 +23,37 @@ ANIOS_PERMITIDOS = ('2019','2020','2021','2022','2023','2024','2025')
 
 # Tablas de origen y destino
 TABLAS_ORIGEN = [
-    "sgss_ctdaa10_anio",
-    "sgss_mtdae10_anio",
-    "sgss_htdah10_anio",
+    # "sgss_ctdaa10_anio",
+    # "sgss_mtdae10_anio",
+    # "sgss_htdah10_anio",
     "sgss_qtiod10_anio"
 ]
 
 TABLAS_DESTINO = [
-    "sgss_ctdaa10_anio_cancer",
-    "sgss_mtdae10_anio_cancer",
-    "sgss_htdah10_anio_cancer",
+    # "sgss_ctdaa10_anio_cancer",
+    # "sgss_mtdae10_anio_cancer",
+    # "sgss_htdah10_anio_cancer",
     "sgss_qtiod10_anio_cancer"
 ]
 
 # Columnas mapeadas para cada tabla
 COLUMNAS = {
-    "sgss_ctdaa10_anio": [
-        "ATENAMBORICENASICOD", "ATENAMBCENASICOD", "ATENAMBACTMEDNUM",
-        "CONDDIAGCOD", "DIAGCOD", "ATENAMBDIAGORD", 
-        "ATENAMBTIPODIAGCOD", "ATENAMBCASODIAGCOD", 
-        "DIAGATENAMBALTAFLAG", "DIAGATENAMBPEAS", "periodo", "anio"
-    ],
-    "sgss_mtdae10_anio": [
-        "ateemeoricenasicod", "ateemecenasicod", "ateemeactmednum",
-        "ateemesecnum", "conddiagcod", "diagcod", "ateemediagord",
-        "ateemetipodiagcod", "periodo", "anio"
-    ],
-    "sgss_htdah10_anio": [
-        "atenhosoricenasicod", "atenhoscenasicod", "atenhosactmednum",
-        "atenhosnumsec", "conddiagcod", "diagcod", "atenhosdiagord",
-        "atenhostipodiagcod", "periodo", "anio"
-    ],
+    # "sgss_ctdaa10_anio": [
+    #     "ATENAMBORICENASICOD", "ATENAMBCENASICOD", "ATENAMBACTMEDNUM",
+    #     "CONDDIAGCOD", "DIAGCOD", "ATENAMBDIAGORD", 
+    #     "ATENAMBTIPODIAGCOD", "ATENAMBCASODIAGCOD", 
+    #     "DIAGATENAMBALTAFLAG", "DIAGATENAMBPEAS", "periodo", "anio"
+    # ],
+    # "sgss_mtdae10_anio": [
+    #     "ateemeoricenasicod", "ateemecenasicod", "ateemeactmednum",
+    #     "ateemesecnum", "conddiagcod", "diagcod", "ateemediagord",
+    #     "ateemetipodiagcod", "periodo", "anio"
+    # ],
+    # "sgss_htdah10_anio": [
+    #     "atenhosoricenasicod", "atenhoscenasicod", "atenhosactmednum",
+    #     "atenhosnumsec", "conddiagcod", "diagcod", "atenhosdiagord",
+    #     "atenhostipodiagcod", "periodo", "anio"
+    # ],
     # "sgss_qtiod10_anio": [
     #     "infopeoricenasicod", "infopecenasicod", "infopesolopenum",
     #     "infopesecnum", "conddiagcod", "infopediagcod", "tipodiagcod",
